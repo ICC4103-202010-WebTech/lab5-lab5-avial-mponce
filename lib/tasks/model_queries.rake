@@ -20,4 +20,31 @@ namespace :db do
     puts(result)
     puts("EOQ") # End Of Query -- always add this line after a query.
   end
+  task :model_queries => :environment do
+    puts("Query 1: numbers of tickets by a given customer")
+    r = Customer.find(5).tickets.count
+    puts(r)
+    puts("EOQ") # End Of Query -- always add this line after a query.
+  end
+
+  task :model_queries => :environment do
+    puts("Query 3: name of events attended by customer")
+    r = Event.joins(ticket_types: {tickets: :order}).where(orders: {customer_id: 1}).select(:name).distinct.pluck(:name)
+    puts(r)
+    puts("EOQ") # End Of Query -- always add this line after a query.
+  end
+
+  task :model_queries => :environment do
+    puts("Query 5: Total sales of an event")
+    r = Event.joins(ticket_types: :tickets).where(id: '1').sum(:ticket_price)
+    puts(r)
+    puts("EOQ") # End Of Query -- always add this line after a query.
+  end
+
+  task :model_queries => :environment do
+    puts("Query 7:  The event that has been most attended by men ages 18 to 30")
+    r = Customer.joins(tickets: [ticket_type: :event]).where("gender = 'm' and age >= 18 and age<=30").group('events.name').count.max
+    puts(r)
+    puts("EOQ") # End Of Query -- always add this line after a query.
+  end
 end
