@@ -28,6 +28,13 @@ namespace :db do
   end
 
   task :model_queries => :environment do
+    puts("Query 2: Total number of different events that a given customer has attended")
+    r = Event.joins(ticket_types: {tickets: :order}).where(orders: {customer_id: 1}).select(:name).distinct.count
+    puts(r)
+    puts("EOQ") # End Of Query -- always add this line after a query.
+  end
+
+  task :model_queries => :environment do
     puts("Query 3: name of events attended by customer")
     r = Event.joins(ticket_types: {tickets: :order}).where(orders: {customer_id: 1}).select(:name).distinct.pluck(:name)
     puts(r)
@@ -35,8 +42,22 @@ namespace :db do
   end
 
   task :model_queries => :environment do
+    puts("Query 4: Total number of tickets sold for an event")
+    r = Ticket.joins(ticket_type: :event).where(events: {id: 1}).count
+    puts(r)
+    puts("EOQ") # End Of Query -- always add this line after a query.
+  end
+
+  task :model_queries => :environment do
     puts("Query 5: Total sales of an event")
     r = Event.joins(ticket_types: :tickets).where(id: '1').sum(:ticket_price)
+    puts(r)
+    puts("EOQ") # End Of Query -- always add this line after a query.
+  end
+
+  task :model_queries => :environment do
+    puts("Query 6: The event that has been most attended by women")
+    r = Event.joins(ticket_types: {tickets: {order: :customer}}).where(customers: {gender: "f"}).group(:id).count.max
     puts(r)
     puts("EOQ") # End Of Query -- always add this line after a query.
   end
